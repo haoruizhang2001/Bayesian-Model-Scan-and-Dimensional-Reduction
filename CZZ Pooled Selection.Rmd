@@ -12,7 +12,7 @@ source('tools.r')
 
 Step 1: Load Data
 ```{r}
-Factors = readRDS('data/All_Factors_pool_enhanced.rds')
+Factors = readRDS('data/All_Factors_pool_selection.rds')
 Factors = as.data.frame(Factors)
 Factors = Factors[,-1]
 fnames = names(Factors)
