@@ -1,0 +1,65 @@
+---
+title: "Bayesian Writing Sample Data Processing"
+author: "HaoruiZhang"
+date: "2024-11-04"
+output: html_document
+---
+
+Step 0: Load the tools
+```{r}
+rm(list = ls())
+source('tools.r')
+```
+
+Step 1: Load the data
+```{r}
+# Load the Principal Component Analysis (PCA) values
+PCs1 = read.csv("data/pca1.csv")
+PCs1 = PCs1[-1] # remove the first column (index)
+PCs2 = read.csv("data/pca2.csv")
+PCs2 = PCs2[-1] # remove the first column (index)
+PCs3 = read.csv("data/pca3.csv")
+PCs3 = PCs3[-1] # remove the first column (index)
+PCs4 = read.csv("data/pca4.csv")
+PCs4 = PCs4[-1] # remove the first column (index)
+PCs5 = read.csv("data/pca5.csv")
+PCs5 = PCs5[-1] # remove the first column (index)
+PCs6 = read.csv("data/pca6.csv")
+PCs6 = PCs6[-1] # remove the first column (index)
+
+# Load the Fama & French 5 Factors with Q-Factors
+Factors = read.csv("data/Factors.csv")
+Factors = Factors[-9:-10] # remove the duplicated columns from Fama & French 5 Factors with Q-Factors
+# set the column names
+Factors <- setNames(Factors, c("Date", "Mkt", "SMB", "HML","RMW", "CMA", "Rf", "MOM", "ME", "IA", "ROE", "EG"))
+Factors['Date'] =strftime(Factors$Date, format = "%Y-%m-%d")
+# extract the date and risk-free rate to an individual dataframe
+Rf <- Factors[, c("Date", "Rf")]
+# drop the risk-free rate from the Factors dataframe
+Factors <- Factors[, -7]
+```
+Step 2: Check the datas have the same number of rows
+```{r}
+nrow(Factors) == nrow(PCs1) & nrow(Factors) == nrow(PCs2) & 
+nrow(Factors) == nrow(PCs3) & nrow(Factors) == nrow(PCs4) & 
+nrow(Factors) == nrow(PCs5) & nrow(Factors) == nrow(PCs6)
+```
+Step 3: Merge the data
+```{r}
+All_Factors_pool_standard <- cbind(Factors, PCs1)
+All_Factors_pool_enhanced <- cbind(Factors, PCs2)
+All_Factors_pool_selection <- cbind(Factors, PCs3)
+All_Factors_split_standard <- cbind(Factors, PCs4)
+All_Factors_split_enhanced <- cbind(Factors, PCs5)
+All_Factors_split_selection <- cbind(Factors, PCs6)
+```
+Step 4: Save the data
+```{r}
+saveRDS(All_Factors_pool_standard, "data/All_Factors_pool_standard.rds")
+saveRDS(All_Factors_pool_enhanced, "data/All_Factors_pool_enhanced.rds")
+saveRDS(All_Factors_pool_selection, "data/All_Factors_pool_selection.rds")
+saveRDS(All_Factors_split_standard, "data/All_Factors_split_standard.rds")
+saveRDS(All_Factors_split_enhanced, "data/All_Factors_split_enhanced.rds")
+saveRDS(All_Factors_split_selection, "data/All_Factors_split_selection.rds")
+saveRDS(Rf, "data/Rf.rds")
+```

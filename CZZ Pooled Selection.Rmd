@@ -1,0 +1,50 @@
+---
+title: "CZZ Pooled Selection"
+author: "HaoruiZhang"
+date: "2024-11-14"
+output: html_document
+---
+
+```{r}
+rm(list = ls())
+source('tools.r')
+```
+
+Step 1: Load Data
+```{r}
+Factors = readRDS('data/All_Factors_pool_enhanced.rds')
+Factors = as.data.frame(Factors)
+Factors = Factors[,-1]
+fnames = names(Factors)
+print(fnames)
+```
+Step 2: Get Length
+```{r}
+K = length(fnames)
+print(K)
+```
+Step 3: Full Models
+```{r}
+thetam = CZZfactorg(xnames = fnames, data = Factors, trainpct = 0.15)
+summaryczz(thetam)
+```
+
+```{r}
+blout = CZZsummaryb(thetam, problower = .025, probupper = .975)
+```
+
+```{r}
+bind = blout[,4] * blout[,5]
+xlsig = fnames[bind > 0]
+print(xlsig)
+```
+Step 4: Model Scan
+```{r}
+scanls = CZZscang(data = Factors, trainpct = 0.15, mustinclude = c("Mkt", "HML", "CMA", "PC1"))
+```
+Step 5: Results
+```{r}
+scanord = scanls$scanord
+
+head(scanord, 10)
+```
